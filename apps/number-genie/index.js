@@ -147,20 +147,12 @@ app.intent(GENERATE_ANSWER_ACTION,
     response.session('fallbackCount',0);
     response.session('steamSoundCount',0);
 
-    let title = getRandomPrompt(assistant, GREETING_PROMPTS);
+    let title = getRandomPrompt(GREETING_PROMPTS);
     let prompt = printf(title + ' ' +
-      getRandomPrompt(assistant, INVOCATION_PROMPT), MIN, MAX);
-    if (assistant.hasSurfaceCapability(assistant.SurfaceCapabilities.SCREEN_OUTPUT)) {
-      let basicCard = assistant.buildBasicCard(IMAGE.INTRO.description)
-        .setImage(IMAGE.INTRO.url, IMAGE.INTRO.altText);
-      let richResponse = assistant.buildRichResponse()
-        .addSimpleResponse(prompt)
-        .addBasicCard(basicCard);
-      ask(assistant, richResponse);
-    } else {
-      ask(assistant, prompt);
-    }
-  });
+      getRandomPrompt(INVOCATION_PROMPT), MIN, MAX);
+      let basicCard = { 'type': 'Standard','title': IMAGE.INTRO.description, 'image': {'largeImageUrl': IMAGE.INTRO.url}, 'text':IMAGE.INTRO.altText };
+      ask(response, prompt, 1, basicCard);
+    });
 
 app.intent(CHECK_GUESS_ACTION,
   function checkGuess (request,response) {
@@ -175,9 +167,9 @@ app.intent(CHECK_GUESS_ACTION,
       response.session('duplicateCount')++;
       if (response.session('duplicateCount') === 1) {
         if (!response.session('hint') || response.session('hint') === NO_HINT) {
-          ask(assistant, printf(getRandomPrompt(assistant, SAME_GUESS_PROMPTS_3), guess));
+          ask(response, printf(getRandomPrompt(assistant, SAME_GUESS_PROMPTS_3), guess));
         } else {
-          ask(assistant, printf(getRandomPrompt(assistant, SAME_GUESS_PROMPTS_1), guess, response.session('hint')));
+          ask(response, printf(getRandomPrompt(assistant, SAME_GUESS_PROMPTS_1), guess, response.session('hint')));
         }
         return;
       } else if (response.session('duplicateCount') === 2) {
@@ -196,9 +188,9 @@ app.intent(CHECK_GUESS_ACTION,
           let richResponse = assistant.buildRichResponse()
             .addSimpleResponse(prompt)
             .addBasicCard(basicCard);
-          ask(assistant, richResponse);
+          ask(response, richResponse);
         } else {
-          ask(assistant, prompt);
+          ask(response, prompt);
         }
         return;
       } else if (response.session('hint') === LOWER_HINT && guess >= response.session('previousGuess')) {
@@ -209,9 +201,9 @@ app.intent(CHECK_GUESS_ACTION,
           let richResponse = assistant.buildRichResponse()
             .addSimpleResponse(prompt)
             .addBasicCard(basicCard);
-          ask(assistant, richResponse);
+          ask(response, richResponse);
         } else {
-          ask(assistant, prompt);
+          ask(response, prompt);
         }
         return;
       }
@@ -221,12 +213,12 @@ app.intent(CHECK_GUESS_ACTION,
       if (guess === MIN) {
         response.session('hint = HIGHER_HINT');
         response.session('previousGuess = guess');
-        ask(assistant, printf(getRandomPrompt(assistant, MIN_PROMPTS), MIN));
+        ask(response, printf(getRandomPrompt(assistant, MIN_PROMPTS), MIN));
         return;
       } else if (guess === MAX) {
         response.session('hint = LOWER_HINT');
         response.session('previousGuess',guess);
-        ask(assistant, printf(getRandomPrompt(assistant, MAX_PROMPTS), MAX));
+        ask(response, printf(getRandomPrompt(assistant, MAX_PROMPTS), MAX));
         return;
       }
     }
@@ -245,9 +237,9 @@ app.intent(CHECK_GUESS_ACTION,
           let richResponse = assistant.buildRichResponse()
             .addSimpleResponse(prompt)
             .addBasicCard(basicCard);
-          ask(assistant, richResponse);
+          ask(response, richResponse);
         } else {
-          ask(assistant, prompt);
+          ask(response, prompt);
         }
         return;
       } else if (answer < guess) {
@@ -262,9 +254,9 @@ app.intent(CHECK_GUESS_ACTION,
           let richResponse = assistant.buildRichResponse()
             .addSimpleResponse(prompt)
             .addBasicCard(basicCard);
-          ask(assistant, richResponse);
+          ask(response, richResponse);
         } else {
-          ask(assistant, prompt);
+          ask(response, prompt);
         }
         return;
       }
@@ -280,9 +272,9 @@ app.intent(CHECK_GUESS_ACTION,
           let richResponse = assistant.buildRichResponse()
             .addSimpleResponse(prompt)
             .addBasicCard(basicCard);
-          ask(assistant, richResponse);
+          ask(response, richResponse);
         } else {
-          ask(assistant, prompt);
+          ask(response, prompt);
         }
         return;
       } else if (answer < guess) {
@@ -295,9 +287,9 @@ app.intent(CHECK_GUESS_ACTION,
           let richResponse = assistant.buildRichResponse()
             .addSimpleResponse(prompt)
             .addBasicCard(basicCard);
-          ask(assistant, richResponse);
+          ask(response, richResponse);
         } else {
-          ask(assistant, prompt);
+          ask(response, prompt);
         }
         return;
       }
@@ -316,9 +308,9 @@ app.intent(CHECK_GUESS_ACTION,
             let richResponse = assistant.buildRichResponse()
               .addSimpleResponse(prompt)
               .addBasicCard(basicCard);
-            ask(assistant, richResponse);
+            ask(response, richResponse);
           } else {
-            ask(assistant, prompt);
+            ask(response, prompt);
           }
         } else {
           let prompt = getRandomPrompt(assistant, HIGHEST_PROMPTS);
@@ -328,9 +320,9 @@ app.intent(CHECK_GUESS_ACTION,
             let richResponse = assistant.buildRichResponse()
               .addSimpleResponse(prompt)
               .addBasicCard(basicCard);
-            ask(assistant, richResponse);
+            ask(response, richResponse);
           } else {
-            ask(assistant, prompt);
+            ask(response, prompt);
           }
         }
         return;
@@ -347,9 +339,9 @@ app.intent(CHECK_GUESS_ACTION,
             let richResponse = assistant.buildRichResponse()
               .addSimpleResponse(prompt)
               .addBasicCard(basicCard);
-            ask(assistant, richResponse);
+            ask(response, richResponse);
           } else {
-            ask(assistant, prompt);
+            ask(response, prompt);
           }
         } else {
           let prompt = getRandomPrompt(assistant, LOWEST_PROMPTS);
@@ -359,9 +351,9 @@ app.intent(CHECK_GUESS_ACTION,
             let richResponse = assistant.buildRichResponse()
               .addSimpleResponse(prompt)
               .addBasicCard(basicCard);
-            ask(assistant, richResponse);
+            ask(response, richResponse);
           } else {
-            ask(assistant, prompt);
+            ask(response, prompt);
           }
         }
         return;
@@ -378,9 +370,9 @@ app.intent(CHECK_GUESS_ACTION,
           let richResponse = assistant.buildRichResponse()
             .addSimpleResponse(prompt)
             .addBasicCard(basicCard);
-          ask(assistant, richResponse);
+          ask(response, richResponse);
         } else {
-          ask(assistant, prompt);
+          ask(response, prompt);
         }
         return;
       } else if (answer < guess) {
@@ -393,9 +385,9 @@ app.intent(CHECK_GUESS_ACTION,
           let richResponse = assistant.buildRichResponse()
             .addSimpleResponse(prompt)
             .addBasicCard(basicCard);
-          ask(assistant, richResponse);
+          ask(response, richResponse);
         } else {
-          ask(assistant, prompt);
+          ask(response, prompt);
         }
         return;
       }
@@ -418,9 +410,9 @@ app.intent(CHECK_GUESS_ACTION,
             let richResponse = assistant.buildRichResponse()
               .addSimpleResponse(prompt)
               .addBasicCard(basicCard);
-            ask(assistant, richResponse);
+            ask(response, richResponse);
           } else {
-            ask(assistant, prompt);
+            ask(response, prompt);
           }
 
         } else {
@@ -432,9 +424,9 @@ app.intent(CHECK_GUESS_ACTION,
               let richResponse = assistant.buildRichResponse()
                 .addSimpleResponse(prompt)
                 .addBasicCard(basicCard);
-              ask(assistant, richResponse);
+              ask(response, richResponse);
             } else {
-              ask(assistant, prompt);
+              ask(response, prompt);
             }
           } else {
             let prompt = getRandomPrompt(assistant, REALLY_HOT_HIGH_PROMPTS_2);
@@ -444,15 +436,15 @@ app.intent(CHECK_GUESS_ACTION,
               let richResponse = assistant.buildRichResponse()
                 .addSimpleResponse(prompt)
                 .addBasicCard(basicCard);
-              ask(assistant, richResponse);
+              ask(response, richResponse);
             } else {
-              ask(assistant, prompt);
+              ask(response, prompt);
             }
           }
         }
         return;
       } else {
-        ask(assistant, printf(getRandomPrompt(assistant, HIGH_PROMPTS) + ' ' +
+        ask(response, printf(getRandomPrompt(assistant, HIGH_PROMPTS) + ' ' +
           getRandomPrompt(assistant, ANOTHER_GUESS_PROMPTS), guess));
         return;
       }
@@ -472,9 +464,9 @@ app.intent(CHECK_GUESS_ACTION,
             let richResponse = assistant.buildRichResponse()
               .addSimpleResponse(prompt)
               .addBasicCard(basicCard);
-            ask(assistant, richResponse);
+            ask(response, richResponse);
           } else {
-            ask(assistant, prompt);
+            ask(response, prompt);
           }
         } else {
           if (diff <= 1) {
@@ -485,9 +477,9 @@ app.intent(CHECK_GUESS_ACTION,
               let richResponse = assistant.buildRichResponse()
                 .addSimpleResponse(prompt)
                 .addBasicCard(basicCard);
-              ask(assistant, richResponse);
+              ask(response, richResponse);
             } else {
-              ask(assistant, prompt);
+              ask(response, prompt);
             }
           } else {
             let prompt = getRandomPrompt(assistant, REALLY_HOT_LOW_PROMPTS_2);
@@ -497,15 +489,15 @@ app.intent(CHECK_GUESS_ACTION,
               let richResponse = assistant.buildRichResponse()
                 .addSimpleResponse(prompt)
                 .addBasicCard(basicCard);
-              ask(assistant, richResponse);
+              ask(response, richResponse);
             } else {
-              ask(assistant, prompt);
+              ask(response, prompt);
             }
           }
         }
         return;
       } else {
-        ask(assistant, printf(getRandomPrompt(assistant, LOW_PROMPTS) + ' ' +
+        ask(response, printf(getRandomPrompt(assistant, LOW_PROMPTS) + ' ' +
           getRandomPrompt(assistant, ANOTHER_GUESS_PROMPTS), guess));
         return;
       }
@@ -526,9 +518,9 @@ app.intent(CHECK_GUESS_ACTION,
           let richResponse = assistant.buildRichResponse()
             .addSimpleResponse(prompt)
             .addBasicCard(basicCard);
-          ask(assistant, richResponse);
+          ask(response, richResponse);
         } else {
-          ask(assistant, prompt);
+          ask(response, prompt);
         }
         return;
       } else {
@@ -542,9 +534,9 @@ app.intent(CHECK_GUESS_ACTION,
           let richResponse = assistant.buildRichResponse()
             .addSimpleResponse(prompt)
             .addBasicCard(basicCard);
-          ask(assistant, richResponse);
+          ask(response, richResponse);
         } else {
-          ask(assistant, prompt);
+          ask(response, prompt);
         }
         return;
       }
@@ -567,7 +559,7 @@ app.intent(PLAY_AGAIN_YES_ACTION,
     response.session('guessCount',0);
     response.session('fallbackCount',0);
     response.session('steamSoundCount',0);
-    ask(assistant, printf(getRandomPrompt(assistant, RE_PROMPT) + ' ' +
+    ask(response, printf(getRandomPrompt(assistant, RE_PROMPT) + ' ' +
       getRandomPrompt(assistant, RE_INVOCATION_PROMPT), MIN, MAX));
   });
 
@@ -588,7 +580,7 @@ app.intent(DEFAULT_FALLBACK_ACTION,
     // Provide two prompts before ending game
     if (response.session('fallbackCount') === 1) {
       assistant.setContext(DONE_YES_NO_CONTEXT);
-      ask(assistant, printf(getRandomPrompt(assistant, FALLBACK_PROMPT_1)));
+      ask(response, printf(getRandomPrompt(assistant, FALLBACK_PROMPT_1)));
     } else {
       assistant.tell(printf(getRandomPrompt(assistant, FALLBACK_PROMPT_2)));
     }
@@ -611,16 +603,16 @@ app.intent(UNKNOWN_DEEPLINK_ACTION,
         // number of letters in the word as the guessed number
         let numberOfLetters = text.length;
         if (numberOfLetters < answer) {
-          ask(assistant, getRandomPrompt(assistant, GREETING_PROMPTS) + ' ' +
+          ask(response, getRandomPrompt(assistant, GREETING_PROMPTS) + ' ' +
             printf(getRandomPrompt(assistant, DEEPLINK_PROMPT_1), text.toUpperCase(), numberOfLetters, numberOfLetters));
         } else if (numberOfLetters > answer) {
-          ask(assistant, getRandomPrompt(assistant, GREETING_PROMPTS) + ' ' +
+          ask(response, getRandomPrompt(assistant, GREETING_PROMPTS) + ' ' +
             printf(getRandomPrompt(assistant, DEEPLINK_PROMPT_2), text.toUpperCase(), numberOfLetters, numberOfLetters));
         } else {
           response.session('hint',NO_HINT);
           response.session('previousGuess',-1);
           assistant.setContext(YES_NO_CONTEXT);
-          ask(assistant, SSML_SPEAK_START + YOU_WIN_AUDIO +
+          ask(response, SSML_SPEAK_START + YOU_WIN_AUDIO +
             printf(getRandomPrompt(assistant, DEEPLINK_PROMPT_3) + ' ' +
             getRandomPrompt(assistant, PLAY_AGAIN_QUESTION_PROMPTS), text.toUpperCase(), numberOfLetters, answer) + SSML_SPEAK_END);
         }
@@ -662,7 +654,7 @@ app.intent(DONE_NO_ACTION,
   function doneNo (request,response) {
     console.log('doneNo');
     response.session('fallbackCount',0);
-    ask(assistant, printf(getRandomPrompt(assistant, RE_PROMPT) + ' ' +
+    ask(response, printf(getRandomPrompt(assistant, RE_PROMPT) + ' ' +
       getRandomPrompt(assistant, ANOTHER_GUESS_PROMPTS)));
   });
 
@@ -671,22 +663,22 @@ app.intent(REPEAT_ACTION,
     console.log('repeat');
     let lastPrompt = printf(response.session('printed'));
     if (lastPrompt) {
-      ask(assistant, printf(getRandomPrompt(assistant, REPEAT_PROMPTS), lastPrompt), false);
+      ask(response, printf(getRandomPrompt(assistant, REPEAT_PROMPTS), lastPrompt), false);
     } else {
-      ask(assistant, printf(getRandomPrompt(assistant, ANOTHER_GUESS_PROMPTS)), false);
+      ask(response, printf(getRandomPrompt(assistant, ANOTHER_GUESS_PROMPTS)), false);
     }
   });
 
   function doPersist (persist) {
     if (persist === undefined || persist) {
-      response.session('lastPrompt') = response.session('previous');
+      response.session('lastPrompt',response.session('previous'));
     }
   }
 
-  function ask (assistant, prompt, persist) {
+  function ask (response, prompt, persist) {
     console.log('ask: ' + prompt);
     doPersist(persist);
-    assistant.ask(prompt, NO_INPUT_PROMPTS);
+    response.say(prompt).reprompt(NO_INPUT_PROMPTS).card(arguments[3]);
   }
 
   function printf(prompt) {
@@ -695,3 +687,5 @@ app.intent(REPEAT_ACTION,
     response.session('printed') = sprintf.apply(this, arguments);
     return sprintf.apply(this, arguments);
   }
+
+module.exports = app;
